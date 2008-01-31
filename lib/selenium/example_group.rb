@@ -13,8 +13,12 @@ module Spec
         include Selenium::Helpers
 
         before(:all) do
-          @browser = Selenium.configuration.browsers.first
           Selenium::Server.connect!
+          @browser = Selenium.configuration.browsers.first
+        end
+
+        before(:each) do
+          @browser.reconnect!
         end
 
         # %w{eval}.each { |m| undef_method m }

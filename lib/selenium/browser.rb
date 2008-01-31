@@ -17,9 +17,15 @@ module Selenium
     end
     
     def disconnect!
-      configuration = Selenium.configuration
-      @selenium.stop
-      @selenium = nil
+      if @selenium
+        @selenium.stop
+        @selenium = nil
+      end
+    end
+    
+    def reconnect!
+      disconnect!
+      connect!
     end
         
     # %w{select eval}.each { |m| undef_method m }
@@ -31,7 +37,6 @@ module Selenium
     end
     
     def execute(*args)
-      connect!
       @selenium.send(*args)
     end
     
