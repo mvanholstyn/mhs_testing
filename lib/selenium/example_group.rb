@@ -9,7 +9,6 @@ module Spec
         include ActionController::UrlWriter
         self.default_url_options = { :host => "#{Selenium.configuration.test_server_host}:#{Selenium.configuration.test_server_port}" }
 
-        include Selenium::Assertions
         include Selenium::Helpers
 
         before(:all) do

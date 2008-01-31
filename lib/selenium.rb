@@ -10,7 +10,6 @@ module Selenium
   end
 end
 
-require File.join(File.dirname(__FILE__), "selenium", "assertions")
 require File.join(File.dirname(__FILE__), "selenium", "browser")
 require File.join(File.dirname(__FILE__), "selenium", "configuration")
 require File.join(File.dirname(__FILE__), "selenium", "driver")
