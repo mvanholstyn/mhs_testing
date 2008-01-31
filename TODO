@@ -1,0 +1,5 @@
+Selenium
+ - Capture screenshots when errors occur (capture_screenshot)
+ - Allow running in multiple browsers
+ - lighter weight browser reset b/w examples
+ - data reset b/w examples
