@@ -10,7 +10,7 @@ module Selenium
     def connect!
       unless @selenium
         configuration = Selenium.configuration
-        @selenium = SeleneseInterpreter.new(configuration.selenium_server_host, configuration.selenium_server_port,
+        @selenium = SeleniumDriver.new(configuration.selenium_server_host, configuration.selenium_server_port,
           command, "http://#{configuration.test_server_host}:#{configuration.test_server_port}/")
         @selenium.start
       end
@@ -42,7 +42,7 @@ module Selenium
     
     def selenium_command(method)
       method = method.to_s
-      methods = SeleneseInterpreter.instance_methods
+      methods = SeleniumDriver.instance_methods
       
       if methods.include?(method)
         method
