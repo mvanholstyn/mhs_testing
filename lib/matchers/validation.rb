@@ -94,9 +94,9 @@ module ValidationMatchers
     end
   
     def failure_message
-      message = "expected #{model.inspect} to "
+      message = "expected #{model.class.name} to "
       message << "pass validation checks when #{attribute} is set to #{@valid_errors.map(&:inspect).join(',')}" unless @valid_errors.empty?
-      message << "and " if @valid_errors.any? && @invalid_errors.any?
+      message << " and " if !@valid_errors.empty? && !@invalid_errors.empty?
       message << "fail validation checks when #{attribute} is set to #{@invalid_errors.map(&:inspect).join(',')}" unless @invalid_errors.empty?
         
       message
