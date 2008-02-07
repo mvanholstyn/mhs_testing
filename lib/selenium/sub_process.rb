@@ -25,7 +25,7 @@ module Selenium
     end
     
     def self.find(command)
-      result = `ps -o pid,command`.split(/\s*\n\s*/).grep(/#{Regexp.escape(command)}/).first
+      result = `ps -e -o pid,command`.split(/\s*\n\s*/).grep(/#{Regexp.escape(command)}/).first
       if result
         process = new
         process.pid = result.to_i
