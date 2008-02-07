@@ -17,7 +17,8 @@ module Selenium
     end
     
     def disconnect!
-      if @selenium
+      configuration = Selenium.configuration
+      if configuration.close_browser_at_exit? && @selenium
         @selenium.stop
         @selenium = nil
       end
@@ -27,7 +28,15 @@ module Selenium
       disconnect!
       connect!
     end
-        
+    
+    class << self
+      def disconnect!
+        Selenium.configuration.browsers.each do |browser|
+          browser.disconnect!
+        end
+      end
+    end
+    
     # %w{select eval}.each { |m| undef_method m }
     %w{open type}.each { |method| undef_method(method) }
 
