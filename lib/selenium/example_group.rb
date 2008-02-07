@@ -17,6 +17,11 @@ module Spec
         end
 
         before(:each) do
+          @browser.connect!
+          # @browser.reconnect!
+        end
+        
+        def reset!
           @browser.reconnect!
         end
 

@@ -5,8 +5,20 @@ namespace :spec do
   require 'spec/translator'
 
   desc "Run the specs under spec/selenium"
-  Spec::Rake::SpecTask.new(:selenium => "test:db:initialize") do |t|
+  Spec::Rake::SpecTask.new(:selenium) do |t|
     t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
     t.spec_files = FileList["spec/selenium/**/*_spec.rb"]
+  end
+  
+  namespace :selenium do
+    namespace :server do
+      task :start => :environment do
+        Selenium::Server.connect!
+      end
+      
+      task :stop => :environment do
+        Selenium::Server.disconnect!
+      end
+    end
   end
 end
