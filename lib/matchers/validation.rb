@@ -69,7 +69,7 @@ module ValidationMatchers
   class ValidatesAttribute
     attr_reader :attribute, :valid_values, :invalid_values, :model
     
-    def initialize(attribute, valid_values, invalid_values)
+    def initialize(attribute, valid_values, invalid_values = [])
       @attribute = attribute
       @valid_values = valid_values
       @invalid_values = invalid_values
@@ -103,7 +103,7 @@ module ValidationMatchers
     end
   end
   
-  def validate(attribute, valid_values, invalid_values)
+  def validate(attribute, valid_values, invalid_values = [])
     ValidatesAttribute.new(attribute, valid_values, invalid_values)
   end
 end
