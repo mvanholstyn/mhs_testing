@@ -1,3 +1,3 @@
 if RAILS_ENV == "test"
-  require 'lwt_testing'
+  require 'mhs_testing'
 end
