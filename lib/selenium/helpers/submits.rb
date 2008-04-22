@@ -73,5 +73,9 @@ module RailsSeleniumStory::Helpers
   def select_form(form_id, *args, &blk)
     SeleniumForm.new browser, form_id, &blk
   end
+
+  def submit_form(form_id, *args, &blk)
+    select_form(browser, form_id, &blk).submit
+  end
   
 end
