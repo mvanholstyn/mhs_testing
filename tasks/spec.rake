@@ -12,14 +12,23 @@ namespace :spec do
   
   namespace :selenium do
     namespace :server do
+      desc "start the selenium server"
       task :start => :environment do
         Selenium::Server.connect!
       end
       
+      desc "stop the selenium server"
       task :stop => :environment do
         Selenium.configuration.stop_selenium_server = true
         Selenium.configuration.stop_test_server = true
         Selenium::Server.disconnect!
+      end
+      
+      desc "restart the selenium server"
+      task :restart do
+        Rake::Task["spec:selenium:server:stop"].invoke
+        sleep 2
+        Rake::Task["spec:selenium:server:start"].invoke
       end
     end
   end

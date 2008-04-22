@@ -30,6 +30,7 @@ module Selenium
         unless selenium_server
           @selenium_server = SubProcess.start(selenium_server_command)
         end
+        sleep 3
       end
     
       def disconnect!
