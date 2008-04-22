@@ -2,7 +2,9 @@ MhsTesting provides two distinct selenium helpers:
  - SeleniumExampleGroup
  - RailsSeleniumStory
  
-In order to use either of these you'll need to perform the two following steps. First, in RAILS_ROOT/config/environment.rb find this line:
+In order to use either of these you'll need to perform the three following steps. 
+
+First, in RAILS_ROOT/config/environment.rb find this line:
   require File.join(File.dirname(__FILE__), 'boot')
 
 and put this line after it:
@@ -18,7 +20,14 @@ Secondly, make a RAILS_ROOT/config/selenium/ directory and put osx.rb file in th
     config.stop_selenium_server = false
     config.stop_test_server = false
   end
-
+  
+And lastly, you will need to tell RSpec to not use transactional fixtures. Put the below in stories/helper.rb:
+  Spec::Runner.configure do |config|
+    config.use_transactional_fixtures = false
+    config.use_instantiated_fixtures  = false
+    config.fixture_path = RAILS_ROOT + '/spec/fixtures/'
+  end
+  
 
 SeleniumExampleGroup
 ====================
