@@ -36,7 +36,7 @@ describe RailsSeleniumStory::Helpers::SeleniumForm do
   end
 
   it "builds a selenium command to click a submit button" do
-    @browser.should_receive(:get_eval).with("selenium.browserbot.getCurrentWindow().eval(\"$$('form#myform input[type=submit]').first().click();\")")
+    @browser.should_receive(:get_eval).with("selenium.browserbot.getCurrentWindow().eval(\"$$('form#myform').first().onsubmit();\")")
     ExampleForm.new(@browser, 'myform').submit    
   end
 end
