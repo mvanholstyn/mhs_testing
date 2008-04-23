@@ -11,7 +11,7 @@ module RailsSeleniumStory::Helpers::EscapeString
     if string_or_regex.blank?
       ".*"
     else
-      string_or_regex.gsub(/(['"\?\(\)\[\]\{\}\+\\\\])/, '\\1')
+      string_or_regex.gsub(/([\$'"\?\(\)\[\]\{\}\+\\\\])/, '\\\\\1')
     end
   end
 end

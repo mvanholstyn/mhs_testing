@@ -1,11 +1,13 @@
 class RailsSeleniumStory < RailsStory  
+  self.use_transactional_fixtures = false
+  
   include ActionController::UrlWriter
   Dir[File.expand_path(File.dirname(__FILE__)) + '/helpers/*.rb'].each { |f| require f }
   include Helpers
   include Matchers
     
   def self.initialize_selenium
-    Selenium::Server.connect!
+#    Selenium::Server.connect!
     @@browser = Selenium.configuration.browsers.first    
   end
   

@@ -18,25 +18,31 @@ module RailsSeleniumStory::Matchers
       block.call if block
       if @@scopes.size == 1
         if @content
-          js = "$$('#{@tag}').#{self.class.build_selector_call(self)}.any();"
+          @js = "$$('#{@tag}').#{self.class.build_selector_call(self)}.any();"
         else
-          js = "$$('#{@tag}').any()"
+          @js = "$$('#{@tag}').any()"
         end
       else
-        js = []
+        @js = []
         while scope=@@scopes.shift
-          if js.empty?
-            js << "$$('#{scope.tag}').#{self.class.build_selector_call(scope)}"
+          if @js.empty?
+            @js << "$$('#{scope.tag}').#{self.class.build_selector_call(scope)}"
           else
-            js << ".select(function(el){ return el.down('#{scope.tag}')}).#{self.class.build_selector_call(scope)}"
+            @js << ".select(function(el){ return el.down('#{scope.tag}')}).#{self.class.build_selector_call(scope)}"
           end
         end
-        js << ".any();"
-        js = js.join("")
+        @js << ".length > 0;"
+        @js = @js.join("")
       end
       @@scopes.clear
-      result = browser.get_eval(js)
-      result == "false" ? false : true
+      browser.wait_for_condition(
+        %|selenium.browserbot.getCurrentWindow().eval("#{@js}");|,
+        10_000
+      )
+    end
+    
+    def failure_message
+      "Couldn't match content with javascript:\n#{@js}"
     end
     
     def self.build_selector_call(scope)

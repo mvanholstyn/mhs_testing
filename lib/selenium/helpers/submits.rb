@@ -66,7 +66,9 @@ module RailsSeleniumStory::Helpers
     end
         
     def submit
-      @browser.get_eval %|selenium.browserbot.getCurrentWindow().eval("$$('form##{@form_id} input[type=submit]').first().click();")|
+      # Firefox 2 wouldn't consistently click the submit buttons so we revert to directly submitting the form
+      # @browser.get_eval %|selenium.browserbot.getCurrentWindow().eval("$$('form##{@form_id} input[type=submit]').first().click();")|
+      @browser.get_eval %|selenium.browserbot.getCurrentWindow().eval("$$('form##{@form_id}').first().onsubmit();")|
     end
   end
   
@@ -75,7 +77,7 @@ module RailsSeleniumStory::Helpers
   end
 
   def submit_form(form_id, *args, &blk)
-    select_form(browser, form_id, &blk).submit
+    select_form(form_id, &blk).submit
   end
   
 end

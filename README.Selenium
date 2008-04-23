@@ -21,13 +21,21 @@ Secondly, make a RAILS_ROOT/config/selenium/ directory and put osx.rb file in th
     config.stop_test_server = false
   end
   
-And lastly, you will need to tell RSpec to not use transactional fixtures. Put the below in stories/helper.rb:
-  Spec::Runner.configure do |config|
-    config.use_transactional_fixtures = false
-    config.use_instantiated_fixtures  = false
-    config.fixture_path = RAILS_ROOT + '/spec/fixtures/'
+And lastly, you will need to tell RSpec to not use transactional fixtures. Put the below in stories/helper.rb. This is currently done putting the below in your stories/helper.rb file:
+
+  class ActiveRecordSafetyListener
+    include Singleton
+    def scenario_started(*args)
+      # override this so we don't use transactions
+    end
+
+    def scenario_succeeded(*args)
+      # override this so we don't use transactions
+    end
+    alias :scenario_pending :scenario_succeeded
+    alias :scenario_failed :scenario_succeeded
   end
-  
+
 
 SeleniumExampleGroup
 ====================
@@ -40,3 +48,5 @@ The RailsSeleniumStory give you the ability to write higher level integration/us
 Be sure to add the following line inside of your stories/helper.rb file:
    Spec::Story::Runner.register_listener RailsSeleniumStoryListener.new
 
+In order to run the stories be sure to start the selenium and test servers. This can be done with the below rake command:
+  rake spec:selenium:server:start
