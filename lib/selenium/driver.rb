@@ -119,6 +119,14 @@ require 'cgi'
 # pattern.
 # 
 # 
+# For commands that return multiple values (such as verifySelectOptions),
+# the string being matched is a comma-separated list of the return values,
+# where both commas and backslashes in the values are backslash-escaped.
+# When providing a pattern, the optional matching syntax (i.e. glob,
+# regexp, etc.) is specified once, as usual, at the beginning of the
+# pattern.
+# 
+# 
 module Selenium
 
     class SeleniumDriver
@@ -515,7 +523,7 @@ module Selenium
         # See also setSpeed.
         #
         def get_speed()
-            do_command("getSpeed", [])
+            return get_string("getSpeed", [])
         end
 
 
@@ -650,24 +658,41 @@ module Selenium
         end
 
 
-        # Selects a popup window; once a popup window has been selected, all
+        # Selects a popup window using a window locator; once a popup window has been selected, all
         # commands go to that window. To select the main window again, use null
         # as the target.
         # 
-        # Note that there is a big difference between a window's internal JavaScript "name" property
-        # and the "title" of a given window's document (which is normally what you actually see, as an end user,
-        # in the title bar of the window).  The "name" is normally invisible to the end-user; it's the second 
+        # 
+        # 
+        # Window locators provide different ways of specifying the window object:
+        # by title, by internal JavaScript "name," or by JavaScript variable.
+        # 
+        # *    <b>title</b>=<em>My Special Window</em>:
+        # Finds the window using the text that appears in the title bar.  Be careful;
+        # two windows can share the same title.  If that happens, this locator will
+        # just pick one.
+        # 
+        # *    <b>name</b>=<em>myWindow</em>:
+        # Finds the window using its internal JavaScript "name" property.  This is the second 
         # parameter "windowName" passed to the JavaScript method window.open(url, windowName, windowFeatures, replaceFlag)
-        # (which selenium intercepts).
-        # Selenium has several strategies for finding the window object referred to by the "windowID" parameter.
+        # (which Selenium intercepts).
+        # 
+        # *    <b>var</b>=<em>variableName</em>:
+        # Some pop-up windows are unnamed (anonymous), but are associated with a JavaScript variable name in the current
+        # application window, e.g. "window.foo = window.open(url);".  In those cases, you can open the window using
+        # "var=foo".
+        # 
+        # 
+        # 
+        # If no window locator prefix is provided, we'll try to guess what you mean like this:
         # 1.) if windowID is null, (or the string "null") then it is assumed the user is referring to the original window instantiated by the browser).
         # 2.) if the value of the "windowID" parameter is a JavaScript variable name in the current application window, then it is assumed
         # that this variable contains the return value from a call to the JavaScript window.open() method.
         # 3.) Otherwise, selenium looks in a hash it maintains that maps string names to window "names".
         # 4.) If <em>that</em> fails, we'll try looping over all of the known windows to try to find the appropriate "title".
         # Since "title" is not necessarily unique, this may have unexpected behavior.
-        # If you're having trouble figuring out what is the name of a window that you want to manipulate, look at the selenium log messages
-        # which identify the names of windows created via window.open (and therefore intercepted by selenium).  You will see messages
+        # If you're having trouble figuring out the name of a window that you want to manipulate, look at the Selenium log messages
+        # which identify the names of windows created via window.open (and therefore intercepted by Selenium).  You will see messages
         # like the following for each window as it is opened:
         # <tt>debug: window.open call intercepted; window ID (which you can use with selectWindow()) is "myNewWindow"</tt>
         # In some cases, Selenium will be unable to intercept a call to window.open (if the call occurs during or before the "onLoad" event, for example).
@@ -731,7 +756,7 @@ module Selenium
 
         # Waits for a popup window to appear and load up.
         #
-        # 'windowID' is the JavaScript window ID of the window that will appear
+        # 'windowID' is the JavaScript window "name" of the window that will appear (not the text of the title bar)
         # 'timeout' is a timeout in milliseconds, after which the action will return with an error
         def wait_for_pop_up(windowID,timeout)
             do_command("waitForPopUp", [windowID,timeout,])
@@ -1057,7 +1082,9 @@ module Selenium
         end
 
 
-        # Gets the value of an element attribute.
+        # Gets the value of an element attribute. The value of the attribute may
+        # differ across browsers (this is the case for the "style" attribute, for
+        # example).
         #
         # 'attributeLocator' is an element locator followed by an @ sign and then the name of the attribute, e.g. "foo@bar"
         def get_attribute(attributeLocator)
@@ -1350,6 +1377,22 @@ module Selenium
         end
 
 
+        # Specifies whether Selenium will ignore xpath attributes that have no
+        # value, i.e. are the empty string, when using the non-native xpath
+        # evaluation engine. You'd want to do this for performance reasons in IE.
+        # However, this could break certain xpaths, for example an xpath that looks
+        # for an attribute whose value is NOT the empty string.
+        # 
+        # The hope is that such xpaths are relatively rare, but the user should
+        # have the option of using them. Note that this only influences xpath
+        # evaluation when using the ajaxslt engine (i.e. not "javascript-xpath").
+        #
+        # 'ignore' is boolean, true means we'll ignore attributes without value                        at the expense of xpath "correctness"; false means                        we'll sacrifice speed for correctness.
+        def ignore_attributes_without_value(ignore)
+            do_command("ignoreAttributesWithoutValue", [ignore,])
+        end
+
+
         # Runs the specified JavaScript snippet repeatedly until it evaluates to "true".
         # The snippet may have multiple lines, but only the result of the last line
         # will be considered.
@@ -1514,6 +1557,20 @@ module Selenium
         # 'functionDefinition' is a string defining the body of a function in JavaScript.   For example: <tt>return inDocument.getElementById(locator);</tt>
         def add_location_strategy(strategyName,functionDefinition)
             do_command("addLocationStrategy", [strategyName,functionDefinition,])
+        end
+
+
+        # Saves the entire contents of the current window canvas to a PNG file.
+        # Currently this only works in Mozilla and when running in chrome mode.
+        # Contrast this with the captureScreenshot command, which captures the
+        # contents of the OS viewport (i.e. whatever is currently being displayed
+        # on the monitor), and is implemented in the RC only. Implementation
+        # mostly borrowed from the Screengrab! Firefox extension. Please see
+        # http://www.screengrab.org for details.
+        #
+        # 'filename' is the path to the file to persist the screenshot as. No                  filename extension will be appended by default.                  Directories will not be created if they do not exist,                    and an exception will be thrown, possibly by native                  code.
+        def capture_entire_page_screenshot(filename)
+            do_command("captureEntirePageScreenshot", [filename,])
         end
 
 
