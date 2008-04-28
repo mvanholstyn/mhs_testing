@@ -20,6 +20,13 @@ module RailsSeleniumStory::Matchers
       chunks << "with a message of '#{message}'" unless message.nil?
       chunks.join(' ')
     end
+
+    def negative_failure_message
+      chunks = []
+      chunks << "expected to NOT see an error on the '#{attribute}' attribute"
+      chunks << "but did"
+      chunks.join(' ')
+    end
     
     private
     

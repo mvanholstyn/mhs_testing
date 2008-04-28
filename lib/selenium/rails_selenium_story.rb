@@ -17,8 +17,12 @@ class RailsSeleniumStory < RailsStory
     
   %w{open type}.each { |method| undef_method(method) }
 
-  def browser
+  def self.browser
     @@browser
+  end
+  
+  def browser
+    self.class.browser
   end
   
   def response

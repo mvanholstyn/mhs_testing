@@ -28,6 +28,14 @@ module Spec::Matchers
       chunks.join(' ')
     end
     
+    def negative_failure_message
+      chunks = []
+      chunks << "expected to not see an error on the '#{attribute}' attribute"
+      chunks << "in #{html}"
+      chunks << "but did"
+      chunks.join(' ')    
+    end
+    
     private
     
     def create_pattern
