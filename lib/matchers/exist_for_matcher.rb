@@ -33,6 +33,7 @@ module Spec::Matchers
     def create_pattern
       pattern = attribute
       pattern = pattern + " #{message}" unless message.nil?
+      pattern
     end
   end
   
