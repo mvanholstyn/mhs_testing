@@ -2,6 +2,10 @@ class Spec::Rails::Example::ControllerExampleGroup
   def self.controller_class
     self.described_type
   end
+  
+  def controller_class
+    self.class.controller_class
+  end  
 
   def self.it_renders_the_default_template(*args)
     if args.size == 3

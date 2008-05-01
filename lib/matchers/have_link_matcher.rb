@@ -2,32 +2,21 @@ module Spec::Matchers
   # Notes:
   #  - using onclick adds a [onclick*=?] rather than a [onclick=?]
   class HaveLink  
-    constructor :href, :method, :selector, :scope, :onclick, :strict => false do
+    def initialize(options={})
+      options.each_pair do |key,val|
+        instance_variable_set "@#{key}", val
+      end
+      @href ||= '#'
       @href = @href.gsub('&', '&amp;')
     end
-  
+
     def matches?(target)
       assert_select(build_onclick_expression)
       @error.nil?
     end
     
     def build_onclick_expression
-      case @method.to_s
-        when "get", "post"
-          /[._]method.*#{@method.to_s.upcase}/
-        when "delete", "put"
-          /_method.*#{@method}/          
-      end 
-    end
-    
-    def build_selector
-      selector_arr = []
-      selector_arr << ["a#{@selector}[href=?]", @href]
-      selector_arr << ["[onclick*=?]", @onclick] if @onclick
-      selector_arr.inject([""]) do |result, arr|
-        result[0] << arr.first
-        result.push(*arr[1..-1])
-      end
+      @onclick
     end
     
     def assert_select(onclick_expression)
@@ -35,7 +24,7 @@ module Spec::Matchers
         if onclick_expression
           @scope.send(:assert_select,"a#{@selector}[href=?][onclick*=?]", @href, onclick_expression)
         else
-          @scope.send(:assert_select, *build_selector)
+          @scope.send(:assert_select,"a#{@selector}[href=?]", @href)
         end
       rescue ::Test::Unit::AssertionFailedError => @error
       end
@@ -50,5 +39,9 @@ module Spec::Matchers
   # Actual matcher that is exposed.  
   def have_link(options)
     HaveLink.new(options.merge(:scope => self))
+  end
+  
+  def have_remote_link(options)
+    HaveLink.new(options.merge(:scope => self, :remote => true))
   end  
 end  

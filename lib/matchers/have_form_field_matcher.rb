@@ -1,6 +1,10 @@
 module Spec::Matchers 
   class HaveFormField
-    constructor :tag, :type, :id, :name, :value, :scope, :checked, :contents, :inside, :strict => false
+    def initialize(options={})
+      options.each_pair do |key,val|
+        instance_variable_set "@#{key}", val
+      end
+    end
     
     def assert_select(*args)
       begin

@@ -7,7 +7,11 @@ module Spec::Matchers
   # Notes:
   #  - onsubmit is a partial text matcher using assert_selects [onsubmit*=sometext] matching capabilities
   class HaveRemoteForm 
-    constructor :id, :onsubmit, :scope, :strict => false
+    def initialize(options={})
+      options.each_pair do |key,val|
+        instance_variable_set "@#{key}", val
+      end
+    end
   
     def matches?(target)
       matcher = Spec::Rails::Matchers::AssertSelect.new(:assert_select, @scope, *build_selector)

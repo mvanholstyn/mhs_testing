@@ -1,9 +1,5 @@
 module Spec::Matchers 
   class HaveLinkToFunction < Spec::Matchers::HaveLink
-    # Currently there is a bug in constructor which fails to inherit the constructor block successful.
-    # This essentially inherits the constructor of the HaveLink matcher.
-    constructor :strict => false do ; end
-    
     def matches?(target)
       assert_select(build_onclick_expression)
       @error.nil?
