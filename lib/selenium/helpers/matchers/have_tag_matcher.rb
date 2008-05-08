@@ -7,7 +7,7 @@ module RailsSeleniumStory::Matchers
   
     def initialize(tag, content=nil, &block)
       @@scopes ||= []
-      @tag = tag
+      @tag = escape_string(tag, 2)
       @content = content
       @block = block
       @@scopes << self
