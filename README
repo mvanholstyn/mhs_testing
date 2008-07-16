@@ -4,6 +4,15 @@ MhsTesting
 This plugin is a compilation of testing helpers that we use at Mutually Human Software. Documentation
 may be sparse.
 
+MhsTesting used to have the following in the init.rb file, but now you have to place this manually in your spec/spec_helper.rb and stories/helper.rb if you wish to have MhsTesting available:
+
+    require 'spec'
+    require 'spec/rails'
+    require File.join(RAILS_ROOT, *%w[vendor plugins mhs_testing lib selenium example_group])
+    require 'spec/rails/story_adapter'
+    require 'mhs_testing'
+    require File.join(RAILS_ROOT, *%w[vendor plugins mhs_testing lib selenium rails_selenium_story])
+
 If you wish to use the selenium test helpers please see README.Selenium.
 
  First, in config/environment.rb find this line:
