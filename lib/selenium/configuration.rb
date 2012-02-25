@@ -10,9 +10,18 @@ module Selenium
         :test_server_host      => 'localhost',
         :test_server_port      => 3001,
         :stop_test_server      => true,
-        :close_browser_at_exit => true
+        :close_browser_at_exit => true,
+        :run_with_rcov         => false
       }
       @browsers = []
+    end
+    
+    def run_with_rcov?
+      ENV["RUN_WITH_RCOV"]
+    end
+    
+    def run_with_rcov=(value)
+      ENV["RUN_WITH_RCOV"] = value.to_s
     end
     
     def method_missing(method_id, *arguments)

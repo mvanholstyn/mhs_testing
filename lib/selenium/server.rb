@@ -10,7 +10,11 @@ module Selenium
       end
       
       def test_server_command
-        "mongrel_rails start -c #{RAILS_ROOT} -e test -p #{configuration.test_server_port}"
+        if configuration.run_with_rcov?
+          "rcov `which mongrel_rails` -o selenium_coverage --rails -x /\A\/Library\/Ruby\// -- start -c #{RAILS_ROOT} -e test -p #{configuration.test_server_port}"
+        else
+          "mongrel_rails start -c #{RAILS_ROOT} -e test -p #{configuration.test_server_port}"
+        end
       end
       
       def selenium_server_command

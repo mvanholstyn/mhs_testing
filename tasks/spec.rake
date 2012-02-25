@@ -11,6 +11,15 @@ namespace :spec do
   end
   
   namespace :selenium do
+    task :rcov do
+      Rake::Task['spec:selenium:server:stop'].invoke
+      
+      Selenium.configuration.run_with_rcov = true
+      Rake::Task['spec:selenium:server:start'].invoke
+      Rake::Task['spec:selenium'].invoke
+      Rake::Task['spec:selenium:server:stop'].invoke
+    end
+    
     namespace :server do
       task :start => :environment do
         Selenium::Server.connect!
